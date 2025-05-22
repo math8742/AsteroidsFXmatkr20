@@ -47,8 +47,6 @@ public class Collision implements IPostEntityProcessingService {
                 world.removeEntity(entity2);
             } else if (type2.equals("Asteroid")) {
                 world.removeEntity(entity1);
-            } else {
-                System.out.println("Inconsequential collision");
             }
         } else if (type1.equals("Asteroid") || type2.equals("Asteroid")) {
             if (type1.equals("Bullet")) {
