@@ -1,14 +1,24 @@
 package dk.sdu.mmmi.cbse.asteroid;
 
+import dk.sdu.mmmi.cbse.common.components.Component;
+import dk.sdu.mmmi.cbse.common.components.Health;
+import dk.sdu.mmmi.cbse.common.components.Lifespan;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 
+import java.util.ServiceLoader;
+
 public class AsteroidPlugin implements IGamePluginService {
 
-    public AsteroidPlugin(){
+    ServiceLoader<Health> loader = ServiceLoader.load(Health.class);
+    private Class<? extends Health> healthClass;
 
+    public AsteroidPlugin(){
+        for (Health health : loader) {
+            this.healthClass = health.getClass();
+        }
     }
 
     @Override
@@ -35,7 +45,18 @@ public class AsteroidPlugin implements IGamePluginService {
         asteroid.setY(0);
         asteroid.setRadius(size);
         asteroid.setRotation((int) (Math.random() * 90));
-        asteroid.setHealth(1);
+
+        // add health component
+        if (healthClass != null){
+            try {
+                Health health = healthClass.getDeclaredConstructor().newInstance();
+                health.setHealth(1);
+                asteroid.addComponent((Component) health);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return asteroid;
     }
 

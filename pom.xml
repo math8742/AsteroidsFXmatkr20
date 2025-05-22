@@ -19,6 +19,9 @@
         <module>Enemy</module>
         <module>Asteroid</module>
         <module>Collision</module>
+        <module>Cooldown</module>
+        <module>Health</module>
+        <module>Lifespan</module>
     </modules>
     <properties>
         <java>java</java>

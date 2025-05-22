@@ -1,9 +1,22 @@
 package dk.sdu.mmmi.cbse.asteroid;
 
+import dk.sdu.mmmi.cbse.common.components.Component;
+import dk.sdu.mmmi.cbse.common.components.Health;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.World;
 
+import java.util.ServiceLoader;
+
 public class AsteroidSplitter {
+
+    ServiceLoader<Health> loader = ServiceLoader.load(Health.class);
+    private Class<? extends Health> healthClass;
+
+    public AsteroidSplitter() {
+        for (Health health : loader) {
+            this.healthClass = health.getClass();
+        }
+    }
 
     public void split(Asteroid asteroid, World world) {
         double radius = asteroid.getRadius();
@@ -37,7 +50,19 @@ public class AsteroidSplitter {
         asteroid.setY(y);
         asteroid.setRadius(size);
         asteroid.setRotation(rotation);
-        asteroid.setHealth(1);
+
+        // add health component
+        if (healthClass != null){
+            try {
+                Health health = healthClass.getDeclaredConstructor().newInstance();
+                health.setHealth(1);
+                asteroid.addComponent((Component) health);
+                System.out.println("class name = "+health.getClass().getSimpleName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return asteroid;
     }
 }

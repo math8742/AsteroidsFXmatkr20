@@ -1,6 +1,8 @@
 package dk.sdu.mmmi.cbse.common.data;
 
+import dk.sdu.mmmi.cbse.common.components.Component;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class Entity implements Serializable {
@@ -12,7 +14,7 @@ public class Entity implements Serializable {
     private double y;
     private double rotation;
     private double radius;
-    private int health;
+    private HashMap<String, Component> components = new HashMap<>();
             
 
     public String getID() {
@@ -58,7 +60,7 @@ public class Entity implements Serializable {
 
     public double getRadius(){return radius;}
 
-    public void setHealth(int health) {this.health = health;}
+    public void addComponent(Component component){components.put(component.getClass().getSimpleName(), component);}
 
-    public int getHealth(){return health;}
+    public Component getComponent(String type){return components.get(type);}
 }

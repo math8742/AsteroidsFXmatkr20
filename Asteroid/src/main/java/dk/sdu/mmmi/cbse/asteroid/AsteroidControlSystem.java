@@ -1,5 +1,6 @@
 package dk.sdu.mmmi.cbse.asteroid;
 
+import dk.sdu.mmmi.cbse.common.components.Health;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.GameKeys;
@@ -23,9 +24,10 @@ public class AsteroidControlSystem implements IEntityProcessingService {
     @Override
     public void process(GameData gameData, World world) {
         for (Entity asteroid: world.getEntities(Asteroid.class)) {
-            int health = asteroid.getHealth();
 
-            if (health == 0) {
+            Health health = (Health) asteroid.getComponent("HealthComponent");
+
+            if (!health.positiveHealth()) {
                 asteroidSplitter.split((Asteroid) asteroid, world);
             } else {
 
