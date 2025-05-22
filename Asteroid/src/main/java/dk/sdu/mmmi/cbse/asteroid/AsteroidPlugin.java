@@ -7,6 +7,9 @@ import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 
 public class AsteroidPlugin implements IGamePluginService {
 
+    public AsteroidPlugin(){
+
+    }
 
     @Override
     public void start(GameData gameData, World world) {
@@ -32,6 +35,7 @@ public class AsteroidPlugin implements IGamePluginService {
         asteroid.setY(0);
         asteroid.setRadius(size);
         asteroid.setRotation((int) (Math.random() * 90));
+        asteroid.setHealth(1);
         return asteroid;
     }
 

@@ -12,6 +12,7 @@ public class Entity implements Serializable {
     private double y;
     private double rotation;
     private double radius;
+    private int health;
             
 
     public String getID() {
@@ -56,4 +57,8 @@ public class Entity implements Serializable {
     public void setRadius(double radius){this.radius = radius;}
 
     public double getRadius(){return radius;}
+
+    public void setHealth(int health) {this.health = health;}
+
+    public int getHealth(){return health;}
 }
