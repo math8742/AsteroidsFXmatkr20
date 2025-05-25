@@ -37,4 +37,15 @@ public interface Health {
      * Returns true if health is greater than 0, otherwise returns false
      */
     boolean positiveHealth();
+
+    /**
+     * Returns current health as int
+     *
+     * Preconditions:
+     * Instance of implementation has an int variable called health
+     *
+     * Postconditions:
+     * Returns current health as int
+     */
+    int getHealth();
 }

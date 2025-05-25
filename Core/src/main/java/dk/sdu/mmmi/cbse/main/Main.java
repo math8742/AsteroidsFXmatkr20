@@ -7,13 +7,14 @@ import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IEntityProcessingService;
 import dk.sdu.mmmi.cbse.common.services.IGamePluginService;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import dk.sdu.mmmi.cbse.common.services.ITextService;
+
+import java.lang.module.Configuration;
+import java.lang.module.ModuleFinder;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
@@ -30,6 +31,7 @@ public class Main extends Application {
     private final World world = new World();
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
     private final Pane gameWindow = new Pane();
+    private final Collection<ITextService> textServices = ServiceLoader.load(ITextService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
 
     public static void main(String[] args) {
         launch(Main.class);
@@ -81,6 +83,10 @@ public class Main extends Application {
             polygons.put(entity, polygon);
             gameWindow.getChildren().add(polygon);
         }
+        textServices.addAll(loadTextServices());
+        for (ITextService textService : textServices) {
+            gameWindow.getChildren().add(textService.getText());
+        }
 
         render();
 
@@ -112,6 +118,9 @@ public class Main extends Application {
         }
         for (IPostEntityProcessingService postEntityProcessorService : getPostEntityProcessingServices()) {
             postEntityProcessorService.process(gameData, world);
+        }
+        for (ITextService textService : textServices) {
+            textService.update(gameData, world);
         }
     }
 
@@ -150,5 +159,16 @@ public class Main extends Application {
 
     private Collection<? extends IPostEntityProcessingService> getPostEntityProcessingServices() {
         return ServiceLoader.load(IPostEntityProcessingService.class).stream().map(ServiceLoader.Provider::get).collect(toList());
+    }
+
+    // Module layer for one module of split packages
+    private Collection<ITextService> loadTextServices() {
+        var finder = ModuleFinder.of(Paths.get("plugins"));
+        var parent = ModuleLayer.boot();
+        Configuration cf = parent.configuration().resolve(finder, ModuleFinder.of(), Set.of("TextPlayer"));
+        ModuleLayer myL = parent.defineModulesWithOneLoader(cf, ClassLoader.getSystemClassLoader());
+        var services = ServiceLoader.load(myL, ITextService.class);
+
+        return services.stream().map(ServiceLoader.Provider::get).collect(Collectors.toList());
     }
 }

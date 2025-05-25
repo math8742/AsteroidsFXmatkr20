@@ -28,4 +28,9 @@ public class HealthComponent implements Component, Health {
     public boolean positiveHealth() {
         return health > 0;
     }
+
+    @Override
+    public int getHealth() {
+        return health;
+    }
 }
