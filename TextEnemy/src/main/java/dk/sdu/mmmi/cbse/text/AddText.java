@@ -19,7 +19,7 @@ public class AddText implements ITextService {
     @Override
     public void update(GameData gameData, World world) {
         for (Entity entity : world.getEntities()) {
-            if (entity.getClass().getSimpleName().equals("Enemy")){
+            if (entity.getClassType().equals("Enemy")){
                 Health health = (Health) entity.getComponent("HealthComponent");
                 int healthValue = health.getHealth();
                 enemyText.setText("Enemy health = "+healthValue);

@@ -5,21 +5,18 @@ import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
-
-import java.util.Objects;
-import java.util.ServiceLoader;
+import java.util.ArrayList;
 
 public class Collision implements IPostEntityProcessingService {
 
-    ServiceLoader<Health> loader = ServiceLoader.load(Health.class);
-
     @Override
     public void process(GameData gameData, World world) {
-        for (Entity entity1 : world.getEntities()) {
-            for (Entity entity2 : world.getEntities()) {
-                if (!Objects.equals(entity1.getID(), entity2.getID())) {
-                    checkCollision(entity1, entity2, world);
-                }
+        ArrayList<Entity> entities = new ArrayList<>(world.getEntities());
+        for (int i = 0; i < entities.size(); i++) {
+            Entity entity1 = entities.get(i);
+            for (int j = i + 1; j < entities.size(); j++) {
+                Entity entity2 = entities.get(j);
+                checkCollision(entity1, entity2, world);
             }
         }
     }
@@ -29,17 +26,17 @@ public class Collision implements IPostEntityProcessingService {
         double radius2 = entity2.getRadius();
         double differenceX = entity1.getX() - entity2.getX();
         double differenceY = entity1.getY() - entity2.getY();
-        double distanceSqrd = differenceX * differenceX + differenceY * differenceY;
+        double distanceSquared = differenceX * differenceX + differenceY * differenceY;
         double sumRadius = radius1 + radius2;
 
-        if (distanceSqrd < sumRadius * sumRadius) {
+        if (distanceSquared < sumRadius * sumRadius) {
             doCollision(entity1, entity2, world);
         }
     }
 
     public void doCollision(Entity entity1, Entity entity2, World world){
-        String type1 = entity1.getClass().getSimpleName();
-        String type2 = entity2.getClass().getSimpleName();
+        String type1 = entity1.getClassType();
+        String type2 = entity2.getClassType();
 
         if (type1.equals("Player") || type1.equals("Enemy") || type2.equals("Player") || type2.equals("Enemy")){
             if (type1.equals("Bullet")) {
