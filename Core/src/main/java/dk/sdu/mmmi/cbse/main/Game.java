@@ -25,6 +25,7 @@ public class Game {
     private final World world = new World();
     private final Map<Entity, Polygon> polygons = new ConcurrentHashMap<>();
     private final Pane gameWindow = new Pane();
+    private Text textScore;
     private Collection<IGamePluginService> gamePluginServices;
     private Collection<IEntityProcessingService> entityProcessingServices;
     private Collection<IPostEntityProcessingService> postEntityProcessingServices;
@@ -41,9 +42,9 @@ public class Game {
     public void start(Stage window) throws Exception {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ModuleConfig.class);
 
-        Text text = new Text(10, 20, "Destroyed asteroids: 0");
+        this.textScore = new Text(10, 20, "Destroyed asteroids: 0");
         gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
-        gameWindow.getChildren().add(text);
+        gameWindow.getChildren().add(textScore);
 
         Scene scene = new Scene(gameWindow);
         scene.setOnKeyPressed(event -> {
@@ -123,6 +124,7 @@ public class Game {
         for (ITextService textService : textServices) {
             textService.update(gameData, world);
         }
+        textScore.setText("Destroyed asteroids: "+world.getScore());
     }
 
     private void draw() {

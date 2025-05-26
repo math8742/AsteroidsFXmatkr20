@@ -4,6 +4,7 @@ import dk.sdu.mmmi.cbse.common.components.Health;
 import dk.sdu.mmmi.cbse.common.data.Entity;
 import dk.sdu.mmmi.cbse.common.data.GameData;
 import dk.sdu.mmmi.cbse.common.data.World;
+import dk.sdu.mmmi.cbse.common.data.ScoreAsteroid;
 import dk.sdu.mmmi.cbse.common.services.IPostEntityProcessingService;
 import java.util.ArrayList;
 
@@ -37,6 +38,7 @@ public class Collision implements IPostEntityProcessingService {
     public void doCollision(Entity entity1, Entity entity2, World world){
         String type1 = entity1.getClassType();
         String type2 = entity2.getClassType();
+        ScoreAsteroid scoreAsteroid = new ScoreAsteroid();
 
         if (type1.equals("Player") || type1.equals("Enemy") || type2.equals("Player") || type2.equals("Enemy")){
             if (type1.equals("Bullet")) {
@@ -54,9 +56,13 @@ public class Collision implements IPostEntityProcessingService {
             if (type1.equals("Bullet")) {
                 world.removeEntity(entity1);
                 getHealthComponent(entity2).setHealth(0);
+                world.setScore(scoreAsteroid.asteroidDestroyed(1));
+                System.out.println("Sent score to microservice");
             } else if (type2.equals("Bullet")) {
                 world.removeEntity(entity2);
                 getHealthComponent(entity1).setHealth(0);
+                world.setScore(scoreAsteroid.asteroidDestroyed(1));
+                System.out.println("Sent score to microservice");
             }
         }
     }
